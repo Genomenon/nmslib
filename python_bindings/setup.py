@@ -1,4 +1,5 @@
 import os
+import os.path
 import platform
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
@@ -11,7 +12,14 @@ __version__ = '2.1.1'
 if sys.platform.startswith("win") and struct.calcsize("P") * 8 == 32:
     raise RuntimeError("Windows 32-bit is not supported.")
 
-dep_list = ['pybind11<2.6.2', 'psutil']
+# need to use a forked version of pybind11 2.6.1 due to missing
+# #include <cstdint>
+# see: https://github.com/pybind/pybind11/issues/4702
+
+#dep_list = ['pybind11<2.6.2', 'psutil']
+
+pybind_dir = os.path.abspath(os.path.join(os.getcwd(), "../../pybind11"))
+dep_list = [f"pybind11 @ file://{pybind_dir}", 'psutil']
 dep_list.append("numpy>=1.10.0,<1.17 ; python_version=='2.7'")
 dep_list.append("numpy>=1.10.0 ; python_version>='3.5'")
 
